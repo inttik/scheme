@@ -1,0 +1,2 @@
+add_library(contrib_catch_main contrib/catch2/catch_main.cpp)
+target_include_directories(contrib_catch_main PUBLIC contrib/catch2)
