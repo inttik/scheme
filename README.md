@@ -11,3 +11,7 @@ cmake ..
 make scheme_repl
 ./scheme_repl
 ```
+
+# TODO
+- [ ] make readable documentation (probably using Doxygen)
+- [ ] add tests
