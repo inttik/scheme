@@ -1,5 +1,6 @@
 set(TESTS
     test_tokenizer.cpp
+    test_parser.cpp
     )
 
 add_catch(test_scheme ${TESTS})
