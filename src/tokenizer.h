@@ -11,7 +11,7 @@ struct SymbolToken {
     std::string name;
 
     bool operator==(const SymbolToken& other) const;
-    
+
     friend std::ostream& operator<<(std::ostream& out, const SymbolToken& token);
 };
 
