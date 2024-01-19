@@ -19,3 +19,4 @@ For more information you can check [task](task) folder
 - [ ] make readable documentation (probably using Doxygen)
 - [ ] add tests
 - [ ] make clear task
+- [ ] use regular expressions in tokenizer
