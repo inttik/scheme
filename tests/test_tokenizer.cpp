@@ -34,6 +34,7 @@ void TestLine(const std::string& line, const std::vector<Token>& correct_order) 
 }
 
 TEST_CASE("Basic tests", "[tokenizer]") {
+    TestLine("", {});
     TestLine("  \t \n\n\t ", {});
 
     TestLine("42", {ConstantToken{42}});
