@@ -1,6 +1,7 @@
 #include "tokenizer.h"
 #include <cctype>
 #include <ostream>
+#include <variant>
 #include "error.h"
 #include "int_type.h"
 
@@ -37,6 +38,40 @@ bool ConstantToken::operator==(const ConstantToken& other) const {
 
 std::ostream& operator<<(std::ostream& out, const ConstantToken& token) {
     out << "[Constant token { " << token.value << "}]";
+    return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const Token& token) {
+    {
+        auto* value = std::get_if<0>(&token);
+        if (value != nullptr) {
+            out << *value;
+        }
+    }
+    {
+        auto* value = std::get_if<1>(&token);
+        if (value != nullptr) {
+            out << *value;
+        }
+    }
+    {
+        auto* value = std::get_if<2>(&token);
+        if (value != nullptr) {
+            out << *value;
+        }
+    }
+    {
+        auto* value = std::get_if<3>(&token);
+        if (value != nullptr) {
+            out << *value;
+        }
+    }
+    {
+        auto* value = std::get_if<4>(&token);
+        if (value != nullptr) {
+            out << *value;
+        }
+    }
     return out;
 }
 

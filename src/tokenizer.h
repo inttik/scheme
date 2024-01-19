@@ -39,6 +39,8 @@ struct ConstantToken {
 
 using Token = std::variant<ConstantToken, BracketToken, SymbolToken, QuoteToken, DotToken>;
 
+std::ostream& operator<<(std::ostream& out, const Token& token);
+
 class Tokenizer {
 public:
     Tokenizer(std::istream* in);
