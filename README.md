@@ -20,3 +20,4 @@ For more information you can check [task](task) folder
 - [ ] add tests
 - [ ] make clear task
 - [ ] use regular expressions in tokenizer
+- [ ] simplify parser logic
