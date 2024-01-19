@@ -1,7 +1,7 @@
 # scheme
 Interpreter for Scheme like language
 
-# How to build
+## How to build
 
 ```
 git clone git@github.com:inttik/scheme.git
@@ -12,6 +12,10 @@ make scheme_repl
 ./scheme_repl
 ```
 
-# TODO
+## What is it
+For more information you can check [task](task) folder
+
+## TODO
 - [ ] make readable documentation (probably using Doxygen)
 - [ ] add tests
+- [ ] make clear task
