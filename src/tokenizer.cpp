@@ -37,7 +37,7 @@ bool ConstantToken::operator==(const ConstantToken& other) const {
 }
 
 std::ostream& operator<<(std::ostream& out, const ConstantToken& token) {
-    out << "[Constant token { " << token.value << "}]";
+    out << "[Constant token {" << token.value << "}]";
     return out;
 }
 
