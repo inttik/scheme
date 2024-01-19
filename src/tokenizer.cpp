@@ -1,5 +1,6 @@
 #include "tokenizer.h"
 #include <cctype>
+#include <ostream>
 #include "error.h"
 #include "int_type.h"
 
@@ -7,16 +8,36 @@ bool SymbolToken::operator==(const SymbolToken& other) const {
     return name == other.name;
 }
 
+std::ostream& operator<<(std::ostream& out, const SymbolToken& token) {
+    out << "[Symbol token {" << token.name << "}]";
+    return out;
+}
+
 bool QuoteToken::operator==(const QuoteToken&) const {
     return true;
+}
+
+std::ostream& operator<<(std::ostream& out, const QuoteToken& token) {
+    out << "[Quote token]";
+    return out;
 }
 
 bool DotToken::operator==(const DotToken&) const {
     return true;
 }
 
+std::ostream& operator<<(std::ostream& out, const DotToken& token) {
+    out << "[Dot token]";
+    return out;
+}
+
 bool ConstantToken::operator==(const ConstantToken& other) const {
     return value == other.value;
+}
+
+std::ostream& operator<<(std::ostream& out, const ConstantToken& token) {
+    out << "[Constant token { " << token.value << "}]";
+    return out;
 }
 
 Tokenizer::Tokenizer(std::istream* in) {
