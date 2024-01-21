@@ -5,6 +5,7 @@ Interpreter for Scheme like language
 
 ```
 git clone git@github.com:inttik/scheme.git
+cd scheme
 mkdir build
 cd build
 cmake ..
