@@ -304,7 +304,7 @@ IsPair::IsPair()
 }
 Object* IsPair::Apply(const ArgsType& arguments) {
     auto [status, v] = ToVector(arguments[0]);
-    if (v.size() == 2) {
+    if (Is<Cell>(arguments[0])) {
         return heap->Make<Symbol>("#t");
     }
     return heap->Make<Symbol>("#f");
@@ -356,18 +356,13 @@ Car::Car()
           .min_arg_count = 1,
           .max_arg_count = 1,
           .name = "car",
-          .raw_argument = true,
       }) {
 }
 Object* Car::Apply(const ArgsType& arguments) {
     if (!Is<Cell>(arguments[0])) {
         throw RuntimeError("using car on empty list / not list");
     }
-    auto data = interpreter_->Execute(As<Cell>(arguments[0])->GetFirst());
-    if (!Is<Cell>(data)) {
-        throw RuntimeError("using car on empty list / not list");
-    }
-    return As<Cell>(data)->GetFirst();
+    return As<Cell>(arguments[0])->GetFirst();
 }
 
 Cdr::Cdr()
@@ -375,18 +370,13 @@ Cdr::Cdr()
           .min_arg_count = 1,
           .max_arg_count = 1,
           .name = "cdr",
-          .raw_argument = true,
       }) {
 }
 Object* Cdr::Apply(const ArgsType& arguments) {
     if (!Is<Cell>(arguments[0])) {
         throw RuntimeError("using cdr on empty list / not list");
     }
-    auto data = interpreter_->Execute(As<Cell>(arguments[0])->GetFirst());
-    if (!Is<Cell>(data)) {
-        throw RuntimeError("using cdr on empty list / not list");
-    }
-    return As<Cell>(data)->GetSecond();
+    return As<Cell>(arguments[0])->GetSecond();
 }
 
 List::List()
