@@ -171,6 +171,7 @@ TEST_CASE_METHOD(SchemeTest, "List functions", "[basic]") {
         ExpectRuntimeError("()");
         ExpectRuntimeError("(1)");
         ExpectRuntimeError("(1 2)");
+        ExpectRuntimeError("(1 . 2)");
     }
     SECTION("List Syntax") {
         ExpectOutput("'(1 2)", "(1 2)");
