@@ -98,6 +98,9 @@ TEST_CASE("Unknow symbol throw test", "[tokenizer]") {
     REQUIRE_THROWS_AS(Parse(current_input), SyntaxError);
 }
 
+TEST_CASE("Complex symbols", "[tokenizer]") {
+    TestLine("aba-caba", {SymbolToken{"aba-caba"}});
+}
 
 TEST_CASE("Constant token test", "[tokenizer]") {
     SECTION("Proper ints") {
