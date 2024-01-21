@@ -9,7 +9,7 @@
 #include "error.h"
 #include "tokenizer.h"
 
-std::vector<Token> Parse(const std::string& line) {
+static std::vector<Token> Parse(const std::string& line) {
     std::istringstream input(line);
     Tokenizer tokenizer(&input);
 
@@ -21,7 +21,7 @@ std::vector<Token> Parse(const std::string& line) {
     return tokens;
 }
 
-void TestLine(const std::string& line, const std::vector<Token>& correct_order) {
+static void TestLine(const std::string& line, const std::vector<Token>& correct_order) {
     CAPTURE(line);
 
     auto order = Parse(line);
