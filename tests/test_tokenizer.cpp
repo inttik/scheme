@@ -98,13 +98,14 @@ TEST_CASE("Unknow symbol throw test", "[tokenizer]") {
     REQUIRE_THROWS_AS(Parse(current_input), SyntaxError);
 }
 
-TEST_CASE("constant token test", "[tokenizer]") {
-    SECTION("proper ints") {
+
+TEST_CASE("Constant token test", "[tokenizer]") {
+    SECTION("Proper ints") {
         Int i = GENERATE(range(-10, 11));
         TestLine(std::to_string(i), {ConstantToken{i}});
     }
     std::string current_input = "+";
-    SECTION("strange ints") {
+    SECTION("Strange ints") {
         Int i = GENERATE(range(0, 11));
         current_input += std::to_string(i);
         TestLine(current_input, {ConstantToken{i}});
@@ -171,7 +172,7 @@ void ApplyFunction(Test& test, size_t id, std::mt19937& rnd) {
     }
 }
 
-TEST_CASE("multiple tokens", "[tokenizer]") {
+TEST_CASE("Multiple tokens", "[tokenizer]") {
     std::mt19937 rnd(1231);
 
     Test current;
