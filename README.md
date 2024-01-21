@@ -14,7 +14,7 @@ make scheme_repl
 ```
 
 ## What is it
-For more information you can check [task](task) folder
+For more information you can check [task](task) folder. In short, that is something like [this](https://inst.eecs.berkeley.edu/~cs61a/fa14/assets/interpreter/scheme.html)
 
 ## TODO
 - [ ] make readable documentation (probably using Doxygen)
