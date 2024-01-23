@@ -9,6 +9,10 @@ public:
         const std::string& current_output = interpreter_.Run(input);
         REQUIRE(current_output == expect_output);
     }
+    void Run(const std::string& input) {
+        CAPTURE(input);
+        REQUIRE_NOTHROW(interpreter_.Run(input));
+    }
     void ExpectSyntaxError(const std::string& input) {
         CAPTURE(input);
         REQUIRE_THROWS_AS(interpreter_.Run(input), SyntaxError);
