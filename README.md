@@ -18,7 +18,7 @@ For more information you can check [task](task) folder. In short, that is someth
 
 ## TODO
 - [ ] make readable documentation (probably using Doxygen)
-- [ ] add tests
+- [x] add tests
 - [ ] make clear task
 - [ ] use regular expressions in tokenizer
 - [ ] simplify parser logic
