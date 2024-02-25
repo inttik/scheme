@@ -33,6 +33,8 @@
 
 # Build directories
 /build
+/asan_build
 
 .cache
+.vscode
 compile_commands.json
