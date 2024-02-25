@@ -1,6 +1,10 @@
 #include "tokenizer.h"
 #include <cctype>
+#include <cstdlib>
 #include <ostream>
+#include <sstream>
+#include <string>
+#include <regex>
 #include <variant>
 #include "error.h"
 #include "int_type.h"
@@ -108,28 +112,29 @@ static char Peek(std::istream* in) {
 }
 
 static bool IsCorrectBeginSymbol(char ch) {
-    if ('a' <= ch && ch <= 'z') {
-        return true;
-    }
-    if ('A' <= ch && ch <= 'Z') {
-        return true;
-    }
-    std::string correct = "<=>*/#";
-    if (correct.find(ch) != std::string::npos) {
-        return true;
-    }
-    return false;
+    static const std::regex kBeginRegex("[a-zA-Z<=>*/#]+");
+    std::string tempo;
+    tempo += ch;
+    return std::regex_match(tempo, kBeginRegex);
 }
 
 static bool IsCorrectInsideSymbol(char ch) {
-    if (isdigit(ch)) {
-        return true;
+    static const std::regex kInsideRegex("[a-zA-Z<=>*/#0-9?!-]+");
+    std::string tempo;
+    tempo += ch;
+    return std::regex_match(tempo, kInsideRegex);
+}
+
+static Int ToInt(const std::string& value) {
+    static std::stringstream ss;
+    ss.clear();
+    ss << value;
+    Int ans;
+    ss >> ans;
+    if (!ss.eof()) {
+        throw SyntaxError("number can't be presented as Int");
     }
-    std::string correct = "?!-";
-    if (correct.find(ch) != std::string::npos) {
-        return true;
-    }
-    return IsCorrectBeginSymbol(ch);
+    return ans;
 }
 
 void Tokenizer::ReadToken() {
@@ -140,101 +145,73 @@ void Tokenizer::ReadToken() {
         is_end_ = true;
         return;
     }
-    bool first = true;
-    bool digit_now = false;
-    int digit_sign = 1;
-    Int value = 0;
-    bool symbol_now = false;
-    std::string symbol;
-    while (true) {
-        if (first) {
-            first = false;
-            char current = Get(in_);
-            if (current == '(') {
-                last_token_ = BracketToken::OPEN;
-                return;
-            } else if (current == ')') {
-                last_token_ = BracketToken::CLOSE;
-                return;
-            } else if (current == '\'') {
-                last_token_ = QuoteToken();
-                return;
-            } else if (current == '.') {
-                last_token_ = DotToken();
-                return;
-            } else if (isdigit(current)) {
-                digit_now = true;
-                digit_sign = 1;
-                value += current - '0';
-                continue;
-            } else if (IsCorrectBeginSymbol(current)) {
-                symbol_now = true;
-                symbol += current;
-                continue;
-            } else if (current == '+' || current == '-') {
-                if (in_->eof() || !isdigit(Peek(in_))) {
-                    symbol = "";
-                    symbol += current;
-                    last_token_ = SymbolToken{symbol};
-                    return;
-                }
-                digit_now = true;
-                digit_sign = 1;
-                if (current == '-') {
-                    digit_sign = -1;
-                }
-                continue;
-            } else {
-                std::string message = "unexpected character '";
-                message.push_back(current);
-                message.push_back('\'');
-                throw SyntaxError(message);
-            }
-            continue;
-        }
-        if (digit_now) {
-            if (in_->eof()) {
-                last_token_ = ConstantToken{value};
-                return;
-            }
-            char will_next = Peek(in_);
-            if (isdigit(will_next)) {
-                Get(in_);
-                if (value > kIntMax / 10 || value < kIntMin / 10) {
-                    throw SyntaxError("number can't be presented as Int");
-                }
-                value *= 10;
-                if (digit_sign == 1) {
-                    int to_add = will_next - '0';
-                    if (value > kIntMax - to_add) {
-                        throw SyntaxError("number can't be presented as Int");
-                    }
-                    value += to_add;
-                } else {
-                    int to_add = will_next - '0';
-                    if (value < kIntMin + to_add) {
-                        throw SyntaxError("number can't be presented as Int");
-                    }
-                    value -= to_add;
-                }
-                continue;
-            }
-            last_token_ = ConstantToken{value};
-            return;
-        }
-        if (symbol_now) {
-            if (in_->eof()) {
-                last_token_ = SymbolToken{symbol};
-                return;
-            }
-            char will_next = Peek(in_);
-            if (IsCorrectInsideSymbol(will_next)) {
-                Get(in_);
-                symbol += will_next;
-                continue;
-            }
+
+    char current = Peek(in_);
+    if (current == '(') {
+        Get(in_);
+        last_token_ = BracketToken::OPEN;
+        return;
+    }
+    if (current == ')') {
+        Get(in_);
+        last_token_ = BracketToken::CLOSE;
+        return;
+    }
+    if (current == '\'') {
+        Get(in_);
+        last_token_ = QuoteToken();
+        return;
+    }
+    if (current == '.') {
+        Get(in_);
+        last_token_ = DotToken();
+        return;
+    }
+
+    current = Get(in_);
+    if (current == '+' || current == '-') {
+        if (in_->eof()) {
+            std::string symbol;
+            symbol += current;
             last_token_ = SymbolToken{symbol};
             return;
         }
+        char next = Peek(in_);
+        if (isdigit(next)) {
+            std::string value;
+            value += current;
+            while (!in_->eof() && isdigit(Peek(in_))) {
+                value += Get(in_);
+            }
+            last_token_ = ConstantToken{ToInt(value)};
+            return;
+        }
+        std::string symbol;
+        symbol += current;
+        last_token_ = SymbolToken{symbol};
+        return;
     }
+    if (isdigit(current)) {
+        std::string value;
+        value += current;
+        while (!in_->eof() && isdigit(Peek(in_))) {
+            value += Get(in_);
+        }
+        last_token_ = ConstantToken{ToInt(value)};
+        return;
+    }
+    if (IsCorrectBeginSymbol(current)) {
+        std::string symbol;
+        symbol += current;
+        while (!in_->eof() && IsCorrectInsideSymbol(Peek(in_))) {
+            symbol += Get(in_);
+        }
+        last_token_ = SymbolToken{symbol};
+        return;
+    }
+
+    std::string message = "unexpected character '";
+    message += current;
+    message += '\'';
+    throw SyntaxError(message);
 }

@@ -20,5 +20,5 @@ For more information you can check [task](task) folder. In short, that is someth
 - [ ] make readable documentation (probably using Doxygen)
 - [x] add tests
 - [ ] make clear task
-- [ ] use regular expressions in tokenizer
+- [x] use regular expressions in tokenizer
 - [x] simplify parser logic
