@@ -21,4 +21,4 @@ For more information you can check [task](task) folder. In short, that is someth
 - [x] add tests
 - [ ] make clear task
 - [ ] use regular expressions in tokenizer
-- [ ] simplify parser logic
+- [x] simplify parser logic

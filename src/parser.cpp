@@ -14,6 +14,7 @@ static Token SafeGet(Tokenizer* tokenizer) {
 
 static Object* ReadList(Tokenizer* tokenizer) {
     static auto heap = GetHeap();
+
     auto current_token = SafeGet(tokenizer);
     if (BracketToken* current = std::get_if<BracketToken>(&current_token)) {
         if (*current == BracketToken::CLOSE) {
@@ -21,23 +22,40 @@ static Object* ReadList(Tokenizer* tokenizer) {
             return nullptr;
         }
     }
-    auto first = Read(tokenizer);
-    current_token = SafeGet(tokenizer);
-    if ([[maybe_unused]] DotToken* current = std::get_if<DotToken>(&current_token)) {
-        tokenizer->Next();
-        auto second = Read(tokenizer);
-        current_token = SafeGet(tokenizer);
+
+    auto ans = heap->Make<Cell>(nullptr, nullptr);
+    ans->SetFirst(Read(tokenizer));
+
+    auto pointer = ans;
+
+    while (true) {
+        auto current_token = SafeGet(tokenizer);
         if (BracketToken* current = std::get_if<BracketToken>(&current_token)) {
             if (*current == BracketToken::CLOSE) {
                 tokenizer->Next();
-                return heap->Make<Cell>(first, second);
+                break;
             }
         }
-        throw SyntaxError("List haven't ended with close bracket");
+        if ([[maybe_unused]] DotToken* current = std::get_if<DotToken>(&current_token)) {
+            tokenizer->Next();
+            pointer->SetSecond(Read(tokenizer));
+            current_token = SafeGet(tokenizer);
+            if (BracketToken* current = std::get_if<BracketToken>(&current_token)) {
+                if (*current == BracketToken::CLOSE) {
+                    tokenizer->Next();
+                    break;
+                }
+            }
+            throw SyntaxError("Improper list haven't ended with close bracket");
+        }
+
+        pointer->SetSecond(heap->Make<Cell>(Read(tokenizer), nullptr));
+        pointer = As<Cell>(pointer->GetSecond());
     }
-    auto second = ReadList(tokenizer);
-    return heap->Make<Cell>(first, second);
+
+    return ans;
 }
+
 Object* Read(Tokenizer* tokenizer) {
     static auto heap = GetHeap();
     auto current_token = SafeGet(tokenizer);
